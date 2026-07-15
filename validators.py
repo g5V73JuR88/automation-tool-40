@@ -1,18 +1,18 @@
 import re
 
-def is_valid_email(email):
-    pattern = r'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}'
-    return re.match(pattern, email) is not None
+def is_valid_input(user_input):
+    if not isinstance(user_input, str):
+        return False
+    if len(user_input) == 0:
+        return False
+    if not re.match(r'^[a-zA-Z0-9_]*$', user_input):
+        return False
+    return True
 
-def is_non_empty_string(value):
-    return isinstance(value, str) and bool(value.strip())
 
-def is_in_range(value, min_value, max_value):
-    return isinstance(value, (int, float)) and min_value <= value <= max_value
-
-def is_valid_url(url):
-    pattern = r'^(http|https)://[\w.-]+[\w.-]+'  
-    return re.match(pattern, url) is not None
-
-def is_numeric(value):
-    return isinstance(value, (int, float))
+def validate_and_process(user_input):
+    if is_valid_input(user_input):
+        # Process the valid input
+        return f'Processed input: {user_input}'
+    else:
+        return 'Invalid input', 400
