@@ -1,28 +1,30 @@
-import json
-import os
+import time
 
-class FileProcessor:
-    def __init__(self, file_path):
-        self.file_path = file_path
+class PerformanceTracker:
+    def __init__(self):
+        self.start_time = None
 
-    def read_file(self):
-        if not os.path.exists(self.file_path):
-            raise FileNotFoundError(f'File not found: {self.file_path}')
-        if not self.file_path.endswith('.json'):
-            raise ValueError('File must be a JSON file.')
-        with open(self.file_path, 'r') as file:
-            try:
-                return json.load(file)
-            except json.JSONDecodeError:
-                raise ValueError('File contains invalid JSON.')
+    def start(self):
+        self.start_time = time.perf_counter()
 
-    def write_file(self, data):
-        if not isinstance(data, dict):
-            raise TypeError('Data must be a dictionary.')
-        with open(self.file_path, 'w') as file:
-            json.dump(data, file, indent=4)
+    def stop(self):
+        if self.start_time is None:
+            raise ValueError("Timer has not been started.")
+        elapsed_time = time.perf_counter() - self.start_time
+        self.start_time = None
+        return elapsed_time
 
-# Example usage:
-# processor = FileProcessor('data.json')
-# data = processor.read_file()
-# processor.write_file(data)
+def optimized_function(data):
+    processed_data = [d * 2 for d in data]
+    return processed_data
+
+def main():
+    tracker = PerformanceTracker()
+    data = range(1000000)
+    tracker.start()
+    result = optimized_function(data)
+    elapsed = tracker.stop()
+    print(f'Processed {len(result)} items in {elapsed:.4f} seconds.')  
+
+if __name__ == '__main__':
+    main()
