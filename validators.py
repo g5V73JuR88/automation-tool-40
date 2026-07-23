@@ -1,21 +1,18 @@
-def validate_input(data):
-    if not isinstance(data, dict):
-        raise ValueError('Input must be a dictionary')
-    if 'value' not in data:
-        raise KeyError('Missing key: value')
-    if not isinstance(data['value'], (int, float)):
-        raise TypeError('Value must be an integer or float')
-    return True
+import re
 
-def validate_range(value, min_value=0, max_value=100):
-    if not (min_value <= value <= max_value):
-        raise ValueError(f'Value {value} out of range ({min_value}-{max_value})')
-    return True
+def validate_email(email):
+    regex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+    return re.match(regex, email) is not None
 
-# Example of using validation in a main processing loop:
-try:
-    input_data = {'value': 50}
-    validate_input(input_data)
-    validate_range(input_data['value'])
-except (ValueError, KeyError, TypeError) as e:
-    print(f'Validation Error: {e}')
+def validate_phone(phone):
+    regex = r'^(\+\d{1,3}[- ]?)?\d{10}$'
+    return re.match(regex, phone) is not None
+
+def validate_url(url):
+    regex = r'^(http|https)://[^\s/$.?#].[^\s]*$'
+    return re.match(regex, url) is not None
+
+if __name__ == '__main__':
+    print(validate_email('test@example.com'))  # True
+    print(validate_phone('+1234567890'))  # True
+    print(validate_url('https://www.example.com'))  # True
