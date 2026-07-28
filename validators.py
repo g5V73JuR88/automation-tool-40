@@ -1,18 +1,14 @@
 import re
 
-def validate_email(email):
-    regex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
-    return re.match(regex, email) is not None
+def validate_input(data):
+    if not isinstance(data, str):
+        raise ValueError('Input must be a string')
+    if not data:
+        raise ValueError('Input cannot be empty')
+    if len(data) < 3:
+        raise ValueError('Input must be at least 3 characters long')
+    if not re.match('^[a-zA-Z0-9 _-]*$', data):
+        raise ValueError('Input contains invalid characters')
 
-def validate_phone(phone):
-    regex = r'^(\+\d{1,3}[- ]?)?\d{10}$'
-    return re.match(regex, phone) is not None
+    return True
 
-def validate_url(url):
-    regex = r'^(http|https)://[^\s/$.?#].[^\s]*$'
-    return re.match(regex, url) is not None
-
-if __name__ == '__main__':
-    print(validate_email('test@example.com'))  # True
-    print(validate_phone('+1234567890'))  # True
-    print(validate_url('https://www.example.com'))  # True
