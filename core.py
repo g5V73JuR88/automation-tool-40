@@ -1,30 +1,22 @@
 import time
+from functools import lru_cache
 
-class PerformanceTracker:
-    def __init__(self):
-        self.start_time = None
+@lru_cache(maxsize=128)
+def complex_calculation(x):
+    time.sleep(2)  # Simulates an expensive computation
+    return x + x * 2
 
-    def start(self):
-        self.start_time = time.perf_counter()
-
-    def stop(self):
-        if self.start_time is None:
-            raise ValueError("Timer has not been started.")
-        elapsed_time = time.perf_counter() - self.start_time
-        self.start_time = None
-        return elapsed_time
-
-def optimized_function(data):
-    processed_data = [d * 2 for d in data]
-    return processed_data
-
-def main():
-    tracker = PerformanceTracker()
-    data = range(1000000)
-    tracker.start()
-    result = optimized_function(data)
-    elapsed = tracker.stop()
-    print(f'Processed {len(result)} items in {elapsed:.4f} seconds.')  
+def process_data(data):
+    results = []
+    for item in data:
+        result = complex_calculation(item)
+        results.append(result)
+    return results
 
 if __name__ == '__main__':
-    main()
+    data = range(10)
+    start_time = time.time()
+    output = process_data(data)
+    end_time = time.time()
+    print(f'Results: {output}')
+    print(f'Execution time: {end_time - start_time} seconds')
