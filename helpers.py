@@ -1,32 +1,30 @@
-def safe_divide(numerator, denominator):
-    if denominator == 0:
-        raise ValueError("Denominator cannot be zero.")
-    return numerator / denominator
+import os
+from datetime import datetime
+
+
+def create_directory(path):
+    if not os.path.exists(path):
+        os.makedirs(path)
+
+
+def timestamp():
+    return datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
 
 def read_file(file_path):
-    try:
-        with open(file_path, 'r') as file:
-            return file.read()
-    except FileNotFoundError:
-        raise FileNotFoundError(f"File not found: {file_path}")
-    except IOError:
-        raise IOError(f"Error reading file: {file_path}")
+    with open(file_path, 'r') as file:
+        return file.read()
 
 
-def parse_json(json_string):
-    import json
-    try:
-        return json.loads(json_string)
-    except json.JSONDecodeError:
-        raise ValueError("Invalid JSON string.")
+def write_file(file_path, data):
+    with open(file_path, 'w') as file:
+        file.write(data)
 
 
-def validate_age(age):
-    if not isinstance(age, int) or age < 0:
-        raise ValueError("Age must be a non-negative integer.")
-    return True
+def append_to_file(file_path, data):
+    with open(file_path, 'a') as file:
+        file.write(data)
 
 
-if __name__ == '__main__':
-    pass
+def list_files(directory):
+    return [f for f in os.listdir(directory) if os.path.isfile(os.path.join(directory, f))]
