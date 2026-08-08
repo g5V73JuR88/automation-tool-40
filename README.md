@@ -1,40 +1,51 @@
-# Automation Tool 4.0
+# automation-tool-40 
 
-Automation Tool 4.0 is a powerful Python-based framework designed to streamline repetitive tasks in software development and system administration. With a focus on simplicity and efficiency, this tool helps users automate coding tasks, deployment processes, and system maintenance. 
+Automation-tool-40 is an advanced Python utility designed to simplify and streamline repetitive tasks across various applications. With a focus on flexibility and ease of use, this tool enhances productivity by automating processes that would otherwise consume valuable time.
 
 ## Features
-
-- **Task Scheduler**: Schedule tasks on a regular basis or trigger them based on specific events, ensuring your automations are up and running exactly when needed.
-- **Integrated Logging**: Automatically log task execution details to troubleshoot and monitor performance over time, making it easy to identify and resolve issues.
-- **Modular Design**: Extend the tool's capabilities by creating and integrating your own modules, allowing for customized automation workflows that fit your specific needs.
-- **Easy Configuration**: Set up automation parameters through a simple configuration file, enabling quick adjustments without diving into the code.
+- **Task Scheduling:** Schedule tasks to run at specified intervals, making it easy to automate routine operations.
+- **Multi-Threading Support:** Execute multiple automation scripts concurrently, optimizing performance and reducing waiting time.
+- **Customizable Scripts:** Create your own automation scripts using Python, allowing for tailored solutions to meet specific workflow needs.
+- **Comprehensive Logging:** Detailed logs track automation history and performance, providing insights for troubleshooting and optimization.
 
 ## Installation
 
-To install Automation Tool 4.0, clone the repository and use pip to manage dependencies:
+To get started with automation-tool-40, follow these commands to install the necessary components:
 
 ```bash
+# Clone the repository
 git clone https://github.com/Developer/automation-tool-40.git
+
+# Navigate to the project directory
 cd automation-tool-40
+
+# Install required dependencies
 pip install -r requirements.txt
 ```
 
 ## Basic Usage Example
 
-After installation, you can execute an automated task by using the following command:
+Here’s how to initiate a simple automation task:
 
-```bash
-python automation.py --task sample_task --schedule daily
+```python
+from automation_tool import AutoTask
+
+# Define a simple task
+def my_task():
+    print("Task is running...")
+
+# Create an instance of AutoTask
+task = AutoTask(task=my_task)
+
+# Schedule the task to run every 10 seconds
+task.schedule(interval=10)
+
+# Start the automation process
+task.start()
 ```
 
-In this example, `sample_task` will run daily, leveraging the built-in task scheduler. For more detailed commands and options, refer to the documentation provided within the repository.
+Once set up, your specified tasks will execute at the defined intervals, allowing you to focus on more strategic activities.
 
-## License
+![MIT License](https://img.shields.io/badge/license-MIT-brightgreen)
 
-![MIT License](https://img.shields.io/badge/license-MIT-green)
-
-This project is licensed under the MIT License. See the LICENSE file for more details. 
-
----
-
-For contributions, issues, or feature requests, please feel free to open a ticket in the GitHub repository. Happy automating!
+For more detailed documentation and advanced usage, please refer to the [Wiki](https://github.com/Developer/automation-tool-40/wiki) or submit any issues and feature requests in the Issues section. Thank you for exploring automation-tool-40!
