@@ -1,24 +1,26 @@
-import json
+import time
+import requests
 
-def load_json(file_path):
-    with open(file_path, 'r') as file:
-        return json.load(file)
+class NetworkError(Exception):
+    pass
 
+def retry(func, retries=3, delay=2):
+    for i in range(retries):
+        try:
+            return func()
+        except NetworkError:
+            if i < retries - 1:
+                time.sleep(delay)
+            else:
+                raise
 
-def save_json(data, file_path):
-    with open(file_path, 'w') as file:
-        json.dump(data, file, indent=4)
+def fetch_data(url):
+    response = requests.get(url)
+    if response.status_code != 200:
+        raise NetworkError('Failed to fetch data')
+    return response.json()
 
-
-def merge_dicts(dict1, dict2):
-    merged = dict1.copy()
-    merged.update(dict2)
-    return merged
-
-
-def filter_dict(data, keys):
-    return {key: data[key] for key in keys if key in data}
-
-
-def get_keys(data):
-    return list(data.keys())
+if __name__ == '__main__':
+    url = 'https://api.example.com/data'
+    data = retry(lambda: fetch_data(url))
+    print(data)
