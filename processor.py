@@ -1,29 +1,27 @@
 import json
-import string
-import re
+import requests
 
-class InputValidationError(Exception):
-    pass
+class DataProcessor:
+    def __init__(self, url):
+        self.url = url
 
-def is_valid_input(user_input):
-    if not isinstance(user_input, str):
-        raise InputValidationError("Input must be a string")
-    if not user_input:
-        raise InputValidationError("Input cannot be empty")
-    if not re.match('^[a-zA-Z0-9_]*$', user_input):
-        raise InputValidationError("Input contains invalid characters")
+    def fetch_data(self):
+        response = requests.get(self.url)
+        response.raise_for_status()
+        return response.json()
 
-def main_processing_loop(inputs):
-    results = []
-    for user_input in inputs:
-        try:
-            is_valid_input(user_input)
-            result = f"Processed: {user_input}"
-            results.append(result)
-        except InputValidationError as e:
-            results.append(f"Error: {str(e)}")
-    return json.dumps(results)
+    def process_data(self, data):
+        return [item['value'] for item in data if 'value' in item]
+
+    def save_to_file(self, data, filename):
+        with open(filename, 'w') as f:
+            json.dump(data, f, indent=2)
+
+    def run(self, filename):
+        data = self.fetch_data()
+        processed_data = self.process_data(data)
+        self.save_to_file(processed_data, filename)
 
 if __name__ == '__main__':
-    sample_inputs = ["valid_input1", "invalid input!", ""]
-    print(main_processing_loop(sample_inputs))
+    processor = DataProcessor('https://api.example.com/data')
+    processor.run('output.json')
