@@ -9,3 +9,7 @@ def setup_logger(log_file='app.log', max_bytes=10*1024*1024, backup_count=5):
     handler.setFormatter(formatter)
     logger.addHandler(handler)
     return logger
+
+if __name__ == '__main__':
+    log = setup_logger()
+    log.info('Logger setup complete.')
