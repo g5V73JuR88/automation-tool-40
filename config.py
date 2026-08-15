@@ -1,12 +1,25 @@
-import logging
-from logging.handlers import RotatingFileHandler
+import os
+import json
 
-def setup_logger(name, log_file, level=logging.INFO):
-    handler = RotatingFileHandler(log_file, maxBytes=1024*1024*5, backupCount=3)
-    handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
-    logger = logging.getLogger(name)
-    logger.setLevel(level)
-    logger.addHandler(handler)
-    return logger
+class ConfigError(Exception):
+    pass
 
-logger = setup_logger('app_logger', 'app.log')
+def load_config(file_path):
+    if not os.path.isfile(file_path):
+        raise ConfigError(f'Config file does not exist: {file_path}')
+    try:
+        with open(file_path, 'r') as file:
+            config = json.load(file)
+    except json.JSONDecodeError:
+        raise ConfigError(f'Invalid JSON in config file: {file_path}')
+    except Exception as e:
+        raise ConfigError(f'Error reading config file: {file_path}, {str(e)}')
+    return config
+
+if __name__ == '__main__':
+    config_path = 'path/to/config.json'
+    try:
+        config = load_config(config_path)
+        print(config)
+    except ConfigError as ce:
+        print(ce)
