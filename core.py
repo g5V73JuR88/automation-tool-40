@@ -1,22 +1,22 @@
-import time
-from functools import lru_cache
+import json
 
-@lru_cache(maxsize=128)
-def complex_calculation(x):
-    time.sleep(2)  # Simulates an expensive computation
-    return x + x * 2
+class CustomError(Exception):
+    pass
 
 def process_data(data):
-    results = []
-    for item in data:
-        result = complex_calculation(item)
-        results.append(result)
-    return results
+    if not isinstance(data, dict):
+        raise CustomError('Input must be a dictionary')
+    
+    try:
+        result = {key: value for key, value in data.items() if value is not None}
+        return json.dumps(result)
+    except (TypeError, ValueError) as e:
+        raise CustomError('Error processing data: ' + str(e))
 
 if __name__ == '__main__':
-    data = range(10)
-    start_time = time.time()
-    output = process_data(data)
-    end_time = time.time()
-    print(f'Results: {output}')
-    print(f'Execution time: {end_time - start_time} seconds')
+    test_data = {'a': 1, 'b': None, 'c': 3}
+    try:
+        output = process_data(test_data)
+        print(output)
+    except CustomError as e:
+        print(e)
