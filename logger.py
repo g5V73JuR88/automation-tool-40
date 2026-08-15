@@ -1,32 +1,27 @@
 import logging
 
 class Logger:
-    def __init__(self, name):
+    def __init__(self, name)
         self.logger = logging.getLogger(name)
-        self.set_up_logging()
-
-    def set_up_logging(self):
         handler = logging.StreamHandler()
         formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
         handler.setFormatter(formatter)
         self.logger.addHandler(handler)
-        self.logger.setLevel(logging.INFO)
+        self.logger.setLevel(logging.DEBUG)
 
-    def info(self, msg):
-        self.logger.info(msg)
+    def debug(self, message):
+        self.logger.debug(message)
 
-    def error(self, msg):
-        self.logger.error(msg)
+    def info(self, message):
+        self.logger.info(message)
 
-    def debug(self, msg):
-        self.logger.debug(msg)
+    def warning(self, message):
+        self.logger.warning(message)
 
-    def warning(self, msg):
-        self.logger.warning(msg)
+    def error(self, message):
+        self.logger.error(message)
 
-    def critical(self, msg):
-        self.logger.critical(msg)
+    def critical(self, message):
+        self.logger.critical(message)
 
-    @classmethod
-    def disable_logging(cls):
-        logging.disable(logging.CRITICAL)
+logger = Logger('AutomationTool')
