@@ -1,27 +1,19 @@
 import re
 
-def validate_email(email: str) -> bool:
-    pattern = r'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}''
-    return re.match(pattern, email) is not None
-
-
-def validate_phone(phone: str) -> bool:
-    pattern = r'\+?1?\d{9,15}'
-    return re.match(pattern, phone) is not None
-
-
-def validate_url(url: str) -> bool:
-    pattern = r'^(http|https)://[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}(/\S*)?''
-    return re.match(pattern, url) is not None
-
-
-def validate_password(password: str) -> bool:
-    if len(password) < 8:
-        return False
-    if not re.search('[A-Z]', password):
-        return False
-    if not re.search('[a-z]', password):
-        return False
-    if not re.search('[0-9]', password):
-        return False
+def validate_input(user_input):
+    if not isinstance(user_input, str):
+        raise ValueError('Input must be a string')
+    if len(user_input) == 0:
+        raise ValueError('Input cannot be empty')
+    if not re.match('^[a-zA-Z0-9_]+$', user_input):
+        raise ValueError('Input must only contain alphanumeric characters and underscores')
     return True
+
+# Example usage within the main processing loop
+
+def process_input(user_input):
+    try:
+        validate_input(user_input)
+        # Proceed with processing
+    except ValueError as e:
+        print(f'Input validation error: {e}')
