@@ -1,25 +1,32 @@
-import time
-import functools
-import requests
+import logging
 
-def retry(retries=3, delay=1, backoff=2):
-    def decorator(func):
-        @functools.wraps(func)
-        def wrapper(*args, **kwargs):
-            for attempt in range(retries):
-                try:
-                    return func(*args, **kwargs)
-                except requests.exceptions.RequestException as e:
-                    if attempt < retries - 1:
-                        time.sleep(delay)
-                        delay *= backoff
-                    else:
-                        raise e
-        return wrapper
-    return decorator
+class CustomError(Exception):
+    pass
 
-@retry(retries=5, delay=2)
-def fetch_data(url):
-    response = requests.get(url)
-    response.raise_for_status()
-    return response.json()
+def safe_divide(num1, num2):
+    if not isinstance(num1, (int, float)) or not isinstance(num2, (int, float)):
+        raise CustomError('Inputs must be numbers')
+    if num2 == 0:
+        raise CustomError('Division by zero is not allowed')
+    return num1 / num2
+
+
+def read_file(file_path):
+    try:
+        with open(file_path, 'r') as file:
+            return file.read()
+    except FileNotFoundError:
+        logging.error('File not found: %s', file_path)
+        raise CustomError('File not found')
+    except IOError:
+        logging.error('Error reading file: %s', file_path)
+        raise CustomError('Error reading file')
+
+
+def parse_json(json_string):
+    import json
+    try:
+        return json.loads(json_string)
+    except json.JSONDecodeError:
+        logging.error('Invalid JSON: %s', json_string)
+        raise CustomError('Invalid JSON format')
