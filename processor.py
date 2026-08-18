@@ -1,27 +1,33 @@
-import json
-import requests
+def read_file(file_path):
+    with open(file_path, 'r') as file:
+        return file.read()
 
-class DataProcessor:
-    def __init__(self, url):
-        self.url = url
 
-    def fetch_data(self):
-        response = requests.get(self.url)
-        response.raise_for_status()
-        return response.json()
+def write_file(file_path, content):
+    with open(file_path, 'w') as file:
+        file.write(content)
 
-    def process_data(self, data):
-        return [item['value'] for item in data if 'value' in item]
 
-    def save_to_file(self, data, filename):
-        with open(filename, 'w') as f:
-            json.dump(data, f, indent=2)
+def append_to_file(file_path, content):
+    with open(file_path, 'a') as file:
+        file.write(content)
 
-    def run(self, filename):
-        data = self.fetch_data()
-        processed_data = self.process_data(data)
-        self.save_to_file(processed_data, filename)
 
-if __name__ == '__main__':
-    processor = DataProcessor('https://api.example.com/data')
-    processor.run('output.json')
+def process_data(data, func):
+    return [func(item) for item in data]
+
+
+def calculate_average(numbers):
+    return sum(numbers) / len(numbers) if numbers else 0
+
+
+def filter_even_numbers(numbers):
+    return [num for num in numbers if num % 2 == 0]
+
+
+def find_max_value(numbers):
+    return max(numbers) if numbers else None
+
+
+def find_min_value(numbers):
+    return min(numbers) if numbers else None
