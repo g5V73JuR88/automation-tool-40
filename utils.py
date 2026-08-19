@@ -1,32 +1,41 @@
-import logging
-
-class CustomError(Exception):
-    pass
-
-def safe_divide(num1, num2):
-    if not isinstance(num1, (int, float)) or not isinstance(num2, (int, float)):
-        raise CustomError('Inputs must be numbers')
-    if num2 == 0:
-        raise CustomError('Division by zero is not allowed')
-    return num1 / num2
+from typing import List, Dict, Any
 
 
-def read_file(file_path):
-    try:
-        with open(file_path, 'r') as file:
-            return file.read()
-    except FileNotFoundError:
-        logging.error('File not found: %s', file_path)
-        raise CustomError('File not found')
-    except IOError:
-        logging.error('Error reading file: %s', file_path)
-        raise CustomError('Error reading file')
+def flatten_list(nested_list: List[List[Any]]) -> List[Any]:
+    """Flatten a nested list.
+
+    Args:
+        nested_list (List[List[Any]]): A list of lists to be flattened.
+
+    Returns:
+        List[Any]: A single flattened list.
+    """
+    return [item for sublist in nested_list for item in sublist]
 
 
-def parse_json(json_string):
-    import json
-    try:
-        return json.loads(json_string)
-    except json.JSONDecodeError:
-        logging.error('Invalid JSON: %s', json_string)
-        raise CustomError('Invalid JSON format')
+def merge_dicts(dict_list: List[Dict[str, Any]]) -> Dict[str, Any]:
+    """Merge a list of dictionaries into a single dictionary.
+
+    Args:
+        dict_list (List[Dict[str, Any]]): A list of dictionaries to merge.
+
+    Returns:
+        Dict[str, Any]: A dictionary containing all key-value pairs from the input dictionaries. If the same key appears in multiple dictionaries, the last value will be retained.
+    """
+    merged_dict = {}
+    for d in dict_list:
+        merged_dict.update(d)
+    return merged_dict
+
+
+def chunk_list(data: List[Any], chunk_size: int) -> List[List[Any]]:
+    """Split a list into chunks of a specified size.
+
+    Args:
+        data (List[Any]): The list to be split into chunks.
+        chunk_size (int): The size of each chunk.
+
+    Returns:
+        List[List[Any]]: A list containing the chunks.
+    """
+    return [data[i:i + chunk_size] for i in range(0, len(data), chunk_size)]
