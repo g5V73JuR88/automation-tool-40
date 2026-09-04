@@ -1,30 +1,21 @@
-import os
-from datetime import datetime
+from typing import Any, Dict, Optional
 
+def validate_input_schema(data: Any, required_keys: list) -> bool:
+    if not isinstance(data, dict):
+        return False
+    return all(key in data for key in required_keys)
 
-def create_directory(path):
-    if not os.path.exists(path):
-        os.makedirs(path)
+def sanitize_input(data: Dict[str, Any]) -> Dict[str, Any]:
+    return {k: str(v).strip() for k, v in data.items() if v is not None}
 
-
-def timestamp():
-    return datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-
-
-def read_file(file_path):
-    with open(file_path, 'r') as file:
-        return file.read()
-
-
-def write_file(file_path, data):
-    with open(file_path, 'w') as file:
-        file.write(data)
-
-
-def append_to_file(file_path, data):
-    with open(file_path, 'a') as file:
-        file.write(data)
-
-
-def list_files(directory):
-    return [f for f in os.listdir(directory) if os.path.isfile(os.path.join(directory, f))]
+def process_main_loop(items: list, required: list) -> list:
+    results = []
+    for item in items:
+        if not validate_input_schema(item, required):
+            continue
+        try:
+            clean_data = sanitize_input(item)
+            results.append(clean_data)
+        except (ValueError, TypeError):
+            continue
+    return results
