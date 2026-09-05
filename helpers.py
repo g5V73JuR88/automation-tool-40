@@ -1,21 +1,24 @@
+import json
+import os
+from pathlib import Path
 from typing import Any, Dict, Optional
 
-def validate_input_schema(data: Any, required_keys: list) -> bool:
-    if not isinstance(data, dict):
-        return False
-    return all(key in data for key in required_keys)
+def load_json(path: str) -> Dict[str, Any]:
+    file_path = Path(path)
+    if not file_path.exists():
+        return {}
+    with open(file_path, 'r', encoding='utf-8') as f:
+        return json.load(f)
 
-def sanitize_input(data: Dict[str, Any]) -> Dict[str, Any]:
-    return {k: str(v).strip() for k, v in data.items() if v is not None}
+def save_json(path: str, data: Dict[str, Any]) -> None:
+    with open(path, 'w', encoding='utf-8') as f:
+        json.dump(data, f, indent=4)
 
-def process_main_loop(items: list, required: list) -> list:
-    results = []
-    for item in items:
-        if not validate_input_schema(item, required):
-            continue
-        try:
-            clean_data = sanitize_input(item)
-            results.append(clean_data)
-        except (ValueError, TypeError):
-            continue
-    return results
+def ensure_dir(path: str) -> None:
+    Path(path).mkdir(parents=True, exist_ok=True)
+
+def get_env(key: str, default: Optional[str] = None) -> str:
+    return os.getenv(key, default) or ''
+
+def format_path(path: str) -> str:
+    return str(Path(path).expanduser().resolve())
