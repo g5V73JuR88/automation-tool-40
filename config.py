@@ -1,25 +1,30 @@
 import os
-import json
+from typing import Dict, Any, Optional
 
-class ConfigError(Exception):
-    pass
+class Config:
+    """Centralized configuration management for automation-tool-40."""
 
-def load_config(file_path):
-    if not os.path.isfile(file_path):
-        raise ConfigError(f'Config file does not exist: {file_path}')
-    try:
-        with open(file_path, 'r') as file:
-            config = json.load(file)
-    except json.JSONDecodeError:
-        raise ConfigError(f'Invalid JSON in config file: {file_path}')
-    except Exception as e:
-        raise ConfigError(f'Error reading config file: {file_path}, {str(e)}')
-    return config
+    def __init__(self, env: str = "development") -> None:
+        self.env: str = env
+        self.settings: Dict[str, Any] = self._load_settings()
 
-if __name__ == '__main__':
-    config_path = 'path/to/config.json'
-    try:
-        config = load_config(config_path)
-        print(config)
-    except ConfigError as ce:
-        print(ce)
+    def _load_settings(self) -> Dict[str, Any]:
+        """Retrieve configuration settings based on environment."""
+        return {
+            "debug": os.getenv("DEBUG", "True") == "True",
+            "timeout": int(os.getenv("TIMEOUT", "30")),
+            "max_retries": int(os.getenv("MAX_RETRIES", "3")),
+            "log_level": os.getenv("LOG_LEVEL", "INFO")
+        }
+
+    def get(self, key: str, default: Optional[Any] = None) -> Any:
+        """Fetch a configuration value by key."""
+        return self.settings.get(key, default)
+
+    def update(self, key: str, value: Any) -> None:
+        """Update a specific configuration setting."""
+        self.settings[key] = value
+
+def get_config() -> Config:
+    """Factory function to instantiate configuration."""
+    return Config(env=os.getenv("APP_ENV", "production"))
