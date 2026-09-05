@@ -1,41 +1,37 @@
-from typing import List, Dict, Any
+import json
+from typing import Any, Dict, Optional
 
+def load_json_file(file_path: str) -> Dict[str, Any]:
+    """Reads and parses a JSON file."""
+    with open(file_path, 'r', encoding='utf-8') as f:
+        return json.load(f)
 
-def flatten_list(nested_list: List[List[Any]]) -> List[Any]:
-    """Flatten a nested list.
+def save_json_file(data: Any, file_path: str) -> None:
+    """Writes data to a JSON file."""
+    with open(file_path, 'w', encoding='utf-8') as f:
+        json.dump(data, f, indent=4)
 
-    Args:
-        nested_list (List[List[Any]]): A list of lists to be flattened.
+def sanitize_dict(data: Dict[str, Any]) -> Dict[str, Any]:
+    """Removes null values from dictionary."""
+    return {k: v for k, v in data.items() if v is not None}
 
-    Returns:
-        List[Any]: A single flattened list.
-    """
-    return [item for sublist in nested_list for item in sublist]
+def flatten_dict(d: Dict[str, Any], parent_key: str = '', sep: str = '_') -> Dict[str, Any]:
+    """Flattens nested dictionary structures."""
+    items = []
+    for k, v in d.items():
+        new_key = f"{parent_key}{sep}{k}" if parent_key else k
+        if isinstance(v, dict):
+            items.extend(flatten_dict(v, new_key, sep=sep).items())
+        else:
+            items.append((new_key, v))
+    return dict(items)
 
-
-def merge_dicts(dict_list: List[Dict[str, Any]]) -> Dict[str, Any]:
-    """Merge a list of dictionaries into a single dictionary.
-
-    Args:
-        dict_list (List[Dict[str, Any]]): A list of dictionaries to merge.
-
-    Returns:
-        Dict[str, Any]: A dictionary containing all key-value pairs from the input dictionaries. If the same key appears in multiple dictionaries, the last value will be retained.
-    """
-    merged_dict = {}
-    for d in dict_list:
-        merged_dict.update(d)
-    return merged_dict
-
-
-def chunk_list(data: List[Any], chunk_size: int) -> List[List[Any]]:
-    """Split a list into chunks of a specified size.
-
-    Args:
-        data (List[Any]): The list to be split into chunks.
-        chunk_size (int): The size of each chunk.
-
-    Returns:
-        List[List[Any]]: A list containing the chunks.
-    """
-    return [data[i:i + chunk_size] for i in range(0, len(data), chunk_size)]
+def get_nested(data: Dict[str, Any], path: str, default: Any = None) -> Any:
+    """Retrieves value from nested dict using dot notation."""
+    keys = path.split('.')
+    for key in keys:
+        if isinstance(data, dict):
+            data = data.get(key)
+        else:
+            return default
+    return data if data is not None else default
