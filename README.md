@@ -1,44 +1,43 @@
 # automation-tool-40
 
-`automation-tool-40` is a high-performance Python framework designed to streamline repetitive task execution and workflow orchestration. It provides a robust, extensible engine that allows developers to automate cross-platform operations with minimal configuration.
+`automation-tool-40` is a high-performance Python framework designed to streamline repetitive task execution and workflow orchestration. It provides a robust engine for building scalable automation scripts with minimal boilerplate code.
 
-## Features
+## Key Features
 
-*   **Concurrent Task Processing:** Leverage Python’s `asyncio` for multi-threaded execution, allowing multiple automation scripts to run simultaneously without resource contention.
-*   **Modular Pipeline Architecture:** Use a plugin-based system to chain disparate tasks into complex, logic-driven workflows.
-*   **Environment-Aware Configuration:** Seamlessly handle credentials and pathing across local development, staging, and production environments using built-in `.env` and YAML support.
-*   **Integrated Logging & Reporting:** Built-in auditing tools track execution time, error rates, and task statuses, outputting detailed summaries in JSON or CSV format.
+*   **Concurrent Task Runner:** Leverages asynchronous I/O to handle multiple operations in parallel, significantly reducing total execution time.
+*   **Modular Plugin Architecture:** Easily extend core functionality by dropping custom scripts into the `plugins/` directory.
+*   **Environment-Aware Config:** Supports dynamic loading of environment variables and YAML configurations for seamless deployments across dev and production.
+*   **Detailed Logging:** Integrated JSON-formatted logging for easy ingestion into monitoring platforms like ELK or Datadog.
 
 ## Installation
 
-Ensure you have Python 3.9+ installed. Clone the repository and install the dependencies:
+Ensure you have Python 3.9+ installed. Clone the repository and install the required dependencies:
 
 ```bash
 git clone https://github.com/Developer/automation-tool-40.git
 cd automation-tool-40
+python3 -m venv venv
+source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-## Usage
+## Basic Usage
 
-Define your automation logic within a task script, then execute it using the CLI runner:
+Initialize the automation engine by passing a task definition file. You can run the tool directly from the terminal:
 
-```python
-# example_task.py
-from automation import Task
+```bash
+# Execute a single automation sequence
+python main.py --config configs/production.yaml --task data-sync
 
-class MyTask(Task):
-    def run(self):
-        print("Executing automated sequence...")
-
-# Run the task via terminal
-python main.py --task example_task.py --interval 60
+# Run with verbose logging for debugging
+python main.py --config configs/dev.yaml --verbose
 ```
 
-This command will initialize the engine and trigger the defined task every 60 seconds. For a full list of available command-line arguments, run `python main.py --help`.
+To schedule recurrent tasks, add the entry to your crontab:
+`0 * * * * /path/to/venv/bin/python /path/to/automation-tool-40/main.py --config cron.yaml`
 
 ## License
 
-![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-Distributed under the MIT License. See `LICENSE` for more information.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
