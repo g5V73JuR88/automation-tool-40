@@ -1,30 +1,30 @@
 import os
-from typing import Dict, Any, Optional
+from pathlib import Path
+from typing import Dict, Any
+
+BASE_DIR = Path(__file__).resolve().parent
+
+DEFAULT_CONFIG: Dict[str, Any] = {
+    "log_level": "INFO",
+    "max_retries": 3,
+    "timeout": 30,
+    "workspace": BASE_DIR / "workspace",
+}
 
 class Config:
-    """Centralized configuration management for automation-tool-40."""
+    def __init__(self, overrides: Dict[str, Any] = None):
+        self._settings = {**DEFAULT_CONFIG, **(overrides or {})}
+        self._load_env_vars()
 
-    def __init__(self, env: str = "development") -> None:
-        self.env: str = env
-        self.settings: Dict[str, Any] = self._load_settings()
+    def _load_env_vars(self) -> None:
+        for key in self._settings.keys():
+            env_val = os.getenv(f"APP_{key.upper()}")
+            if env_val:
+                self._settings[key] = env_val
 
-    def _load_settings(self) -> Dict[str, Any]:
-        """Retrieve configuration settings based on environment."""
-        return {
-            "debug": os.getenv("DEBUG", "True") == "True",
-            "timeout": int(os.getenv("TIMEOUT", "30")),
-            "max_retries": int(os.getenv("MAX_RETRIES", "3")),
-            "log_level": os.getenv("LOG_LEVEL", "INFO")
-        }
+    def get(self, key: str, default: Any = None) -> Any:
+        return self._settings.get(key, default)
 
-    def get(self, key: str, default: Optional[Any] = None) -> Any:
-        """Fetch a configuration value by key."""
-        return self.settings.get(key, default)
-
-    def update(self, key: str, value: Any) -> None:
-        """Update a specific configuration setting."""
-        self.settings[key] = value
-
-def get_config() -> Config:
-    """Factory function to instantiate configuration."""
-    return Config(env=os.getenv("APP_ENV", "production"))
+    @property
+    def settings(self) -> Dict[str, Any]:
+        return self._settings.copy()
