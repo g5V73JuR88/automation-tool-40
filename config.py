@@ -1,30 +1,31 @@
+import json
 import os
-from pathlib import Path
-from typing import Dict, Any
+from typing import Any, Dict
 
-BASE_DIR = Path(__file__).resolve().parent
-
-DEFAULT_CONFIG: Dict[str, Any] = {
-    "log_level": "INFO",
-    "max_retries": 3,
+DEFAULT_CONFIG = {
+    "retries": 3,
     "timeout": 30,
-    "workspace": BASE_DIR / "workspace",
+    "log_level": "INFO",
+    "enabled": True
 }
 
-class Config:
-    def __init__(self, overrides: Dict[str, Any] = None):
-        self._settings = {**DEFAULT_CONFIG, **(overrides or {})}
-        self._load_env_vars()
+def load_config(path: str) -> Dict[str, Any]:
+    config = DEFAULT_CONFIG.copy()
+    if os.path.exists(path):
+        with open(path, "r") as f:
+            try:
+                user_data = json.load(f)
+                config.update(user_data)
+            except json.JSONDecodeError:
+                pass
+    return config
 
-    def _load_env_vars(self) -> None:
-        for key in self._settings.keys():
-            env_val = os.getenv(f"APP_{key.upper()}")
-            if env_val:
-                self._settings[key] = env_val
+def validate_config(config: Dict[str, Any]) -> None:
+    required_keys = {"retries", "timeout", "log_level", "enabled"}
+    if not required_keys.issubset(config.keys()):
+        raise ValueError(f"missing required keys: {required_keys - config.keys()}")
 
-    def get(self, key: str, default: Any = None) -> Any:
-        return self._settings.get(key, default)
-
-    @property
-    def settings(self) -> Dict[str, Any]:
-        return self._settings.copy()
+if __name__ == "__main__":
+    cfg = load_config("config.json")
+    validate_config(cfg)
+    print(f"Config loaded: {cfg}")
