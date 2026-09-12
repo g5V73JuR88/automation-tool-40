@@ -2,30 +2,22 @@ import json
 import os
 from typing import Any, Dict
 
-DEFAULT_CONFIG = {
-    "retries": 3,
-    "timeout": 30,
-    "log_level": "INFO",
-    "enabled": True
-}
+class ConfigLoader:
+    def __init__(self, defaults: Dict[str, Any] = None):
+        self.defaults = defaults or {}
+        self._config: Dict[str, Any] = self.defaults.copy()
 
-def load_config(path: str) -> Dict[str, Any]:
-    config = DEFAULT_CONFIG.copy()
-    if os.path.exists(path):
-        with open(path, "r") as f:
-            try:
-                user_data = json.load(f)
-                config.update(user_data)
-            except json.JSONDecodeError:
-                pass
-    return config
+    def load_from_file(self, filepath: str) -> None:
+        if os.path.exists(filepath):
+            with open(filepath, 'r') as f:
+                data = json.load(f)
+                self._config.update(data)
 
-def validate_config(config: Dict[str, Any]) -> None:
-    required_keys = {"retries", "timeout", "log_level", "enabled"}
-    if not required_keys.issubset(config.keys()):
-        raise ValueError(f"missing required keys: {required_keys - config.keys()}")
+    def get(self, key: str, default: Any = None) -> Any:
+        return self._config.get(key, default)
 
-if __name__ == "__main__":
-    cfg = load_config("config.json")
-    validate_config(cfg)
-    print(f"Config loaded: {cfg}")
+    def __getitem__(self, key: str) -> Any:
+        return self._config[key]
+
+    def __repr__(self) -> str:
+        return f"ConfigLoader(data={self._config})"
